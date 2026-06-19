@@ -5,6 +5,7 @@ require_once 'config/Database.php';
 require_once 'controllers/AuthController.php';
 require_once 'controllers/DashboardController.php';
 require_once 'controllers/TaskController.php';
+require_once 'controllers/ProfileController.php';
 
 $dbInstance = Database::getInstance();
 $db = $dbInstance->getConnection();
@@ -38,6 +39,10 @@ switch ($action) {
     case 'delete_task':
         $taskController = new TaskController($db);
         $taskController->delete();
+        break;
+    case 'edit_profile':
+        $profileController = new ProfileController($db);
+        $profileController->edit();
         break;
     default:
         $authController->login();

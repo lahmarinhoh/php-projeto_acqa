@@ -61,4 +61,26 @@ class Task {
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
         return $stmt->execute();
     }
+
+    public function getTaskStats($user_id) {
+        $query = "SELECT status, COUNT(*) as total FROM " . $this->table . " WHERE user_id = :user_id GROUP BY status";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $results = $stmt->fetchAll();
+        
+        $stats = [
+            'pendente' => 0,
+            'concluida' => 0,
+            'total' => 0
+        ];
+
+        foreach ($results as $row) {
+            $stats[$row['status']] = $row['total'];
+            $stats['total'] += $row['total'];
+        }
+
+        return $stats;
+    }
 }

@@ -48,4 +48,34 @@ class User {
         }
         return false;
     }
+
+    public function getUserById($id) {
+        $query = "SELECT id, username, email FROM " . $this->table . " WHERE id = :id LIMIT 1";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
+    public function updateProfile($id, $username, $email, $password = null) {
+        if (!empty($password)) {
+            $query = "UPDATE " . $this->table . " SET username = :username, email = :email, password = :password WHERE id = :id";
+            $stmt = $this->db->prepare($query);
+            $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+            $stmt->bindParam(':password', $hashed_password);
+        } else {
+            $query = "UPDATE " . $this->table . " SET username = :username, email = :email WHERE id = :id";
+            $stmt = $this->db->prepare($query);
+        }
+
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        try {
+            return $stmt->execute();
+        } catch(PDOException $e) {
+            return false;
+        }
+    }
 }

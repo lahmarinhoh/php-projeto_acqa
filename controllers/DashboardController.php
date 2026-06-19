@@ -15,8 +15,10 @@ class DashboardController {
     public function index() {
         $userId = $_SESSION['user_id'];
         $userName = $_SESSION['username'];
-
+        
         $tasks = $this->taskModel->getTasksByUserId($userId);
+
+        $stats = $this->taskModel->getTaskStats($userId);
 
         require_once 'views/dashboard.php';
     }
